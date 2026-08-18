@@ -3,7 +3,22 @@
   "version": "1.0.0",
   "description": "Concentrate.ai Hiring Quiz",
   "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
   "scripts": {
+    "dev:api": "npm run dev --workspace @quiz/api",
+    "build:api": "npm run build --workspace @quiz/api",
+    "start:api": "npm run start --workspace @quiz/api",
+    "migrate": "npm run migrate --workspace @quiz/api",
+    "seed": "npm run seed --workspace @quiz/api",
+    "seed:demo": "npm run seed --workspace @quiz/api -- --demo",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
+    "typecheck": "tsc -b apps/api",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "@playwright/test": "^1.48.0",
@@ -33,7 +48,7 @@
     "vitest": "^2.1.8"
   },
   "dependencies": {
-    "@fastify/cookie": "^12.0.0",
+    "@fastify/cookie": "^11.0.2",
     "@fastify/cors": "^10.0.1",
     "@radix-ui/react-avatar": "^1.1.2",
     "@radix-ui/react-dialog": "^1.1.4",

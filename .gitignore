@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+.npm/
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+.next/
+out/
+
+# Environment (never commit real secrets; .env.example is the template)
+.env
+.env.*
+!.env.example
+
+# TLS material from the Certbot/Nginx deployment — never in git
+*.pem
+*.key
+*.crt
+
+# Test and coverage output
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+blob-report/
+.playwright/
+playwright/.cache/
+
+# Local-only compose overrides (host port remaps)
+docker-compose.override.yml
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+logs/
+
+# Editors and OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Caches
+.eslintcache
+.cache/
+.turbo/
+
+# Agent and editor local state (machine-specific, not shared)
+.claude/settings.local.json
