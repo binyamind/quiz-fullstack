@@ -1,0 +1,14 @@
+{
+  "name": "@quiz/api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "node --experimental-strip-types --watch --env-file-if-exists=../../.env src/server.ts",
+    "build": "tsc -b",
+    "start": "node dist/server.js",
+    "migrate": "node --experimental-strip-types --env-file-if-exists=../../.env src/infra/migrate-cli.ts",
+    "seed": "node --experimental-strip-types --env-file-if-exists=../../.env src/infra/seed-cli.ts"
+  }
+}
