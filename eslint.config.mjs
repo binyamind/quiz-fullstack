@@ -8,7 +8,15 @@ import prettier from 'eslint-config-prettier';
  * reference but this file is what runs. Rules mirror it.
  */
 export default [
-  { ignores: ['**/dist/**', '**/node_modules/**', '**/.next/**'] },
+  {
+    ignores: [
+      '**/dist/**',
+      '**/node_modules/**',
+      '**/.next/**',
+      // Next regenerates this with a triple-slash routes reference.
+      '**/next-env.d.ts',
+    ],
+  },
   js.configs.recommended,
   {
     files: ['**/*.ts', '**/*.tsx'],

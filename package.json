@@ -8,17 +8,21 @@
   ],
   "scripts": {
     "dev:api": "npm run dev --workspace @quiz/api",
+    "dev:web": "npm run dev --workspace @quiz/web",
     "build:api": "npm run build --workspace @quiz/api",
+    "build:web": "npm run build --workspace @quiz/web",
     "start:api": "npm run start --workspace @quiz/api",
+    "start:web": "npm run start --workspace @quiz/web",
     "migrate": "npm run migrate --workspace @quiz/api",
     "seed": "npm run seed --workspace @quiz/api",
     "seed:demo": "npm run seed --workspace @quiz/api -- --demo",
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
-    "typecheck": "tsc -b apps/api",
+    "typecheck": "tsc -b apps/api && tsc --noEmit -p apps/web",
     "lint": "eslint . --ext .ts,.tsx",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "e2e": "playwright test"
   },
   "devDependencies": {
     "@playwright/test": "^1.48.0",
@@ -38,6 +42,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^5.0.0",
+    "jsdom": "^29.1.1",
     "postcss": "^8.4.49",
     "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.9",
