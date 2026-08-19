@@ -62,11 +62,15 @@ test.describe.serial('school hall', () => {
   });
 
   test('teacher publishes work and student hands it in', async ({ page }) => {
+    const stamp = Date.now();
+    const className = `Latin ${stamp}`;
+    const assignmentTitle = `Declensions ${stamp}`;
+
     await signIn(page, 'tina@school.test');
     await expect(page.getByRole('heading', { name: 'Your classes' })).toBeVisible();
-    await page.getByLabel('Class name').fill('Latin');
+    await page.getByLabel('Class name').fill(className);
     await page.getByRole('button', { name: 'Open class' }).click();
-    await expect(page.getByRole('heading', { name: 'Latin' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: className })).toBeVisible();
 
     await page.locator('#studentId').selectOption({ label: 'Sue Student' });
     await page.getByRole('button', { name: 'Enrol' }).click();
@@ -74,20 +78,20 @@ test.describe.serial('school hall', () => {
 
     await page.getByRole('link', { name: 'New assignment' }).click();
     await expect(page.getByRole('heading', { name: 'New assignment' })).toBeVisible();
-    await page.getByLabel('Title').fill('Declensions');
+    await page.getByLabel('Title').fill(assignmentTitle);
     await page.getByLabel('Brief').fill('Decline puella.');
     await page.getByLabel('Publish immediately').check();
     await page.getByRole('button', { name: 'Save assignment' }).click();
-    await expect(page.getByRole('heading', { name: 'Declensions' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: assignmentTitle })).toBeVisible();
 
     await signOut(page, /Tina Teacher/);
 
     await signIn(page, 'sue@school.test');
     await page.getByRole('link', { name: 'Work' }).click();
     await expect(page.getByRole('heading', { name: 'Assignments' })).toBeVisible();
-    await expect(page.getByRole('link', { name: /Declensions/ })).toBeVisible();
-    await page.getByRole('link', { name: /Declensions/ }).click();
-    await expect(page.getByRole('heading', { name: 'Declensions' })).toBeVisible();
+    await expect(page.getByRole('link', { name: assignmentTitle })).toBeVisible();
+    await page.getByRole('link', { name: assignmentTitle }).click();
+    await expect(page.getByRole('heading', { name: assignmentTitle })).toBeVisible();
     await page.getByLabel('Your work').fill('puella, puellae, puellae');
     await page.getByRole('button', { name: 'Hand in' }).click();
     await expect(page.getByText('Submitted')).toBeVisible();
@@ -95,20 +99,24 @@ test.describe.serial('school hall', () => {
     await signOut(page, /Sue Student/);
 
     await signIn(page, 'tina@school.test');
-    await page.getByRole('link', { name: 'Latin' }).click();
-    await page.getByRole('link', { name: 'Declensions' }).click();
+    await page.getByRole('link', { name: className }).click();
+    await expect(page.getByRole('heading', { name: className })).toBeVisible();
+    await page.getByRole('link', { name: assignmentTitle }).click();
+    await expect(page.getByRole('heading', { name: assignmentTitle })).toBeVisible();
     await page.getByRole('link', { name: 'Sue Student' }).click();
-    await page.getByLabel('Mark').fill('9');
+    // Assignment edit has "Maximum mark"; wait for the grade form before filling.
+    await expect(page.getByRole('heading', { name: 'Sue Student' })).toBeVisible();
+    await page.getByLabel('Mark', { exact: true }).fill('9');
     await page.getByLabel('Feedback').fill('Good start.');
     await page.getByRole('button', { name: 'Save mark' }).click();
-    await expect(page.getByText('Marked')).toBeVisible();
+    await expect(page.getByRole('status').filter({ hasText: 'Marked' })).toBeVisible();
 
     await signOut(page, /Tina Teacher/);
     await signIn(page, 'sue@school.test');
     await page.getByRole('link', { name: 'Work' }).click();
     await expect(page.getByRole('heading', { name: 'Assignments' })).toBeVisible();
-    await page.getByRole('link', { name: /Declensions/ }).click();
-    await expect(page.getByRole('heading', { name: 'Declensions' })).toBeVisible();
+    await page.getByRole('link', { name: assignmentTitle }).click();
+    await expect(page.getByRole('heading', { name: assignmentTitle })).toBeVisible();
     await expect(page.getByText('9 / 100')).toBeVisible();
     await expect(page.getByText('Good start.')).toBeVisible();
   });
