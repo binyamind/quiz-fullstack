@@ -21,6 +21,7 @@ test.describe.serial('school hall', () => {
     await expect(page.getByRole('heading', { name: 'School overview' })).toBeVisible();
 
     await page.getByRole('link', { name: 'People' }).click();
+    await expect(page.getByRole('heading', { name: 'Directory' })).toBeVisible();
     await page.getByLabel('Name').fill('Riley Teacher');
     await page.getByLabel('Email').fill(`riley.${Date.now()}@school.test`);
     await page.locator('#role').selectOption('teacher');
@@ -32,13 +33,24 @@ test.describe.serial('school hall', () => {
     await page.getByPlaceholder('Search name or email').fill('Sam Student');
     await page.getByRole('button', { name: 'Filter' }).click();
     await page.getByRole('link', { name: 'Sam Student' }).click();
-    await page.getByRole('button', { name: 'Suspend account' }).click();
+    await expect(page.getByRole('heading', { name: 'Sam Student' })).toBeVisible();
+    // Retries reuse the seeded DB, so Sam may already be suspended.
+    await expect(
+      page.getByRole('button', { name: /^(Suspend|Restore) account$/ })
+    ).toBeVisible();
+    const suspend = page.getByRole('button', { name: 'Suspend account' });
+    if (await suspend.isVisible()) {
+      await suspend.click();
+    }
     await expect(page.getByRole('button', { name: 'Restore account' })).toBeVisible();
 
     await page.getByRole('link', { name: 'Groups' }).click();
-    await page.getByLabel('Name').fill('Science faculty');
+    // Sam's profile also has a Name field; wait until the groups form is up.
+    await expect(page.getByRole('heading', { name: 'Teacher groups' })).toBeVisible();
+    const groupName = `Science faculty ${Date.now()}`;
+    await page.getByLabel('Name').fill(groupName);
     await page.getByRole('button', { name: 'Create group' }).click();
-    await expect(page.getByRole('heading', { name: 'Science faculty' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: groupName })).toBeVisible();
   });
 
   test('suspended student cannot sign in', async ({ page }) => {
@@ -61,6 +73,7 @@ test.describe.serial('school hall', () => {
     await expect(page.getByText('Sue Student')).toBeVisible();
 
     await page.getByRole('link', { name: 'New assignment' }).click();
+    await expect(page.getByRole('heading', { name: 'New assignment' })).toBeVisible();
     await page.getByLabel('Title').fill('Declensions');
     await page.getByLabel('Brief').fill('Decline puella.');
     await page.getByLabel('Publish immediately').check();
@@ -71,8 +84,10 @@ test.describe.serial('school hall', () => {
 
     await signIn(page, 'sue@school.test');
     await page.getByRole('link', { name: 'Work' }).click();
+    await expect(page.getByRole('heading', { name: 'Assignments' })).toBeVisible();
     await expect(page.getByRole('link', { name: /Declensions/ })).toBeVisible();
     await page.getByRole('link', { name: /Declensions/ }).click();
+    await expect(page.getByRole('heading', { name: 'Declensions' })).toBeVisible();
     await page.getByLabel('Your work').fill('puella, puellae, puellae');
     await page.getByRole('button', { name: 'Hand in' }).click();
     await expect(page.getByText('Submitted')).toBeVisible();
@@ -91,7 +106,9 @@ test.describe.serial('school hall', () => {
     await signOut(page, /Tina Teacher/);
     await signIn(page, 'sue@school.test');
     await page.getByRole('link', { name: 'Work' }).click();
+    await expect(page.getByRole('heading', { name: 'Assignments' })).toBeVisible();
     await page.getByRole('link', { name: /Declensions/ }).click();
+    await expect(page.getByRole('heading', { name: 'Declensions' })).toBeVisible();
     await expect(page.getByText('9 / 100')).toBeVisible();
     await expect(page.getByText('Good start.')).toBeVisible();
   });
