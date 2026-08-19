@@ -76,6 +76,15 @@ describe('publicOrigin', () => {
     ).toBe('http://0.0.0.0:3000');
     expect(
       publicOrigin({
+        url: 'https://0.0.0.0:3000/x',
+        headers: new Headers({
+          host: 'school.test',
+          'x-forwarded-proto': 'wss',
+        }),
+      })
+    ).toBe('https://school.test');
+    expect(
+      publicOrigin({
         url: 'https://localhost:3000/x',
         headers: new Headers({
           'x-forwarded-host': ' a.example, b.example ',
